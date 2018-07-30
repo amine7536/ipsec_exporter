@@ -78,6 +78,42 @@ func TestGetConfiguredIpSecConnections_withNewLines(t *testing.T) {
 	}
 }
 
+func TestGetConfiguredIpSecConnections_autoIgnore(t *testing.T) {
+	input := []string{"conn fancy_dc", "  auto=ignore"}
+	connections := getConfiguredIpSecConnection(input)
+
+	if len(connections) != 1 {
+		t.Errorf("Expected to have found 1 connection, but has found %d", len(connections))
+		return
+	}
+
+	if connections[0].name != "fancy_dc" {
+		t.Errorf("Should have found connection 'fancy_dc', but found %s", connections[0].name)
+	}
+
+	if !connections[0].ignored {
+		t.Errorf("Expected connection to be ignored")
+	}
+}
+
+func TestGetConfiguredIpSecConnections_autoIgnoreMultipleTunnels(t *testing.T) {
+	input := []string{"conn fancy_dc", "  esp=aes256-sha256-modp2048!", "", "  left=10.0.0.7", "", "conn second_dc", "  auto=ignore"}
+	connections := getConfiguredIpSecConnection(input)
+
+	if len(connections) != 2 {
+		t.Errorf("Expected to have found 2 connection, but has found %d", len(connections))
+		return
+	}
+
+	if connections[0].ignored {
+		t.Errorf("Expected connection '%s' not to be ignored", connections[0].name)
+	}
+
+	if !connections[1].ignored {
+		t.Errorf("Expected connection '%s' to be ignored", connections[1].name)
+	}
+}
+
 func TestExtractLines(t *testing.T) {
 	input := "First\nSecond\n\nThird"
 	inputSliced := extractLines(input)

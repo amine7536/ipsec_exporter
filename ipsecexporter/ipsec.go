@@ -53,6 +53,10 @@ func (c IpSecConfiguration) QueryStatus() IpSecStatus {
 			status := getStatus(out)
 			s.status[connection.name] = status
 		}
+
+		// TODO
+		// if tunnel ignored && status down
+		//		set status ignored
 	}
 
 	return s
@@ -102,10 +106,21 @@ func getConfiguredIpSecConnection(ipsecConfigLines []string) []IpSecConnection {
 	connections := []IpSecConnection{}
 
 	for _, line := range ipsecConfigLines {
+		// Match connection definition lines
 		re := regexp.MustCompile(`conn\s([a-zA-Z0-9_-]+)`)
 		match := re.FindStringSubmatch(line)
 		if len(match) >= 2 {
 			connections = append(connections, IpSecConnection{name: match[1], ignored: false})
+		}
+
+		// Match auto=ignore lines
+		reAutoIgnore := regexp.MustCompile(`auto=ignore`)
+		matchAutoIgnore := reAutoIgnore.FindStringSubmatch(line)
+		if len(matchAutoIgnore) >= 1 {
+			connectionIndex := len(connections) - 1
+			if len(connections) > connectionIndex {
+				connections[connectionIndex].ignored = true
+			}
 		}
 	}
 
