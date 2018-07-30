@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"io/ioutil"
 	"github.com/prometheus/common/log"
-)
+	)
 
 type IpSecConnection struct {
 	name    string
@@ -28,6 +28,7 @@ const (
 	connectionEstablished int = 1
 	down                  int = 2
 	unknown               int = 3
+	ignored               int = 4
 )
 
 func FetchIpSecConfiguration(fileName string) (IpSecConfiguration, error) {
@@ -45,18 +46,19 @@ func (c IpSecConfiguration) QueryStatus() IpSecStatus {
 	}
 
 	for _, connection := range c.tunnel {
+		if connection.ignored {
+			s.status[connection.name] = ignored
+			continue
+		}
+
 		cmd := exec.Command("ipsec", "status", connection.name)
 		if out, err := cmd.Output(); err != nil {
 			log.Warnf("Were not able to execute 'ipsec status %s'. %v", connection, err)
-			continue
+			s.status[connection.name] = unknown
 		} else {
 			status := getStatus(out)
 			s.status[connection.name] = status
 		}
-
-		// TODO
-		// if tunnel ignored && status down
-		//		set status ignored
 	}
 
 	return s
