@@ -13,8 +13,8 @@ func TestGetConfiguredIpSecConnections_simpleLine(t *testing.T) {
 		return
 	}
 
-	if connections[0] != "fancy_dc" {
-		t.Errorf("Should have found connection 'fancy_dc', but found %s", connections[0])
+	if connections[0].name != "fancy_dc" {
+		t.Errorf("Should have found connection 'fancy_dc', but found %s", connections[0].name)
 	}
 }
 
@@ -27,8 +27,8 @@ func TestGetConfiguredIpSecConnections_connectionIncludingNumber(t *testing.T) {
 		return
 	}
 
-	if connections[0] != "fancy_345" {
-		t.Errorf("Should have found connection 'fancy_345', but found %s", connections[0])
+	if connections[0].name != "fancy_345" {
+		t.Errorf("Should have found connection 'fancy_345', but found %s", connections[0].name)
 	}
 }
 
@@ -41,8 +41,8 @@ func TestGetConfiguredIpSecConnections_simpleLineAndComment(t *testing.T) {
 		return
 	}
 
-	if connections[0] != "fancy_dc" {
-		t.Errorf("Should have found connection 'fancy_dc', but found %s", connections[0])
+	if connections[0].name != "fancy_dc" {
+		t.Errorf("Should have found connection 'fancy_dc', but found %s", connections[0].name)
 	}
 }
 
@@ -55,8 +55,8 @@ func TestGetConfiguredIpSecConnections_withDefault(t *testing.T) {
 		return
 	}
 
-	if connections[0] != "fancy_dc" {
-		t.Errorf("Should have found connection 'fancy_dc', but found %s", connections[0])
+	if connections[0].name != "fancy_dc" {
+		t.Errorf("Should have found connection 'fancy_dc', but found %s", connections[0].name)
 	}
 }
 
@@ -69,12 +69,12 @@ func TestGetConfiguredIpSecConnections_withNewLines(t *testing.T) {
 		return
 	}
 
-	if connections[0] != "fancy_dc" {
-		t.Errorf("Should have found connection 'fancy_dc', but found %s", connections[0])
+	if connections[0].name != "fancy_dc" {
+		t.Errorf("Should have found connection 'fancy_dc', but found %s", connections[0].name)
 	}
 
-	if connections[1] != "second_dc" {
-		t.Errorf("Should have found connection 'second_dc', but found %s", connections[1])
+	if connections[1].name != "second_dc" {
+		t.Errorf("Should have found connection 'second_dc', but found %s", connections[1].name)
 	}
 }
 
